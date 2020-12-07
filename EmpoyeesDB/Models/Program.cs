@@ -10,7 +10,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(ManagerProfile());
+            Console.WriteLine(ProjectAudit());
         }
         static string GetEmployeesInformation()
         {
@@ -104,20 +104,7 @@ namespace EmpoyeesDB
             int j = 0;
             foreach (var r in result)
             {
-                if (i == 0)
-                {
-                    if (r.EndDate == null)
-                    {
-                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {NullEndDate}");
-                    }
-                    else
-                    {
-                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {r.EndDate}" + "\n");
-                    }
-                    j++;
-                }
-
-                else if (r.FirstName != result[i - 1].FirstName && r.LastName != result[i - 1].LastName && j > 0 && j < 5)
+                if (i == 0||(r.FirstName != result[i - 1].FirstName && r.LastName != result[i - 1].LastName && j > 0 && j < 5))
                 {
                     if (r.EndDate == null)
                     {
