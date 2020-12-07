@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace EmpoyeesDB
 {
@@ -9,7 +10,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(MoveWorkers());
+            Console.WriteLine(ProjectAudit());
         }
         static string GetEmployeesInformation()
         {
@@ -63,7 +64,7 @@ namespace EmpoyeesDB
             _context.Towns.Add(new Towns() { Name = "Peteria" });
             _context.SaveChanges();
 
-            var Browns = _context.Employees.Where(e => e.LastName.Equals("Brown")).Select(e=>e).ToList();
+            var Browns = _context.Employees.Where(e => e.LastName.Equals("Brown")).Select(e => e).ToList();
             _context.Addresses.Add(new Addresses()
             {
                 AddressText = "There is nothing to read.",
@@ -79,5 +80,57 @@ namespace EmpoyeesDB
 
             return sb.ToString().TrimEnd();
         }
+
+        static string ProjectAudit()
+        {
+            var result =
+                _context.EmployeesProjects.Join(_context.Employees,
+                (ep => ep.EmployeeId),
+                (e => e.EmployeeId),
+                (ep, e) => new
+                {
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Manager = e.Manager,
+                    ProjectName = ep.Project.Name,
+                    StartDate = ep.Project.StartDate,
+                    EndDate = ep.Project.EndDate
+                }).
+                Where(e => e.StartDate.Year >= 2002 && e.StartDate.Year <= 2005).
+                ToList();
+            string NullEndDate = "НЕ ЗАВЕРШЕН\n";
+            var sb = new StringBuilder();
+            int i = 0;
+            int j = 0;
+            if (i == 0)
+            {
+                if (result[i].EndDate == null)
+                {
+                    sb.Append($"{result[i].FirstName} {result[i].LastName} {result[i].Manager.FirstName} {result[i].Manager.LastName} {result[i].ProjectName} {result[i].StartDate} {NullEndDate}");
+                }
+                else
+                {
+                    sb.Append($"{result[i].FirstName} {result[i].LastName} {result[i].Manager.FirstName} {result[i].Manager.LastName} {result[i].ProjectName} {result[i].StartDate} {result[i].EndDate}" + "\n");
+                }
+                j++;
+            }
+            foreach (var r in result)            {
+                if (r.FirstName != result[i-1].FirstName && r.LastName != result[i-1].LastName && j > 0 && j < 5)
+                {
+                    if (r.EndDate == null)
+                    {
+                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {NullEndDate}");
+                    }
+                    else
+                    {
+                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {r.EndDate}" + "\n");
+                    }
+                    j++;
+                }
+                i++;
+            }
+            return sb.ToString().TrimEnd();
+        }
+
     }
 }
