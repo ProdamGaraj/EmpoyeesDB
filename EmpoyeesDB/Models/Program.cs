@@ -10,7 +10,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(ProjectAudit());
+            Console.WriteLine(ManagerProfile());
         }
         static string GetEmployeesInformation()
         {
@@ -117,7 +117,7 @@ namespace EmpoyeesDB
                     j++;
                 }
 
-                else if (r.FirstName != result[i-1].FirstName && r.LastName != result[i-1].LastName && j > 0 && j < 5)
+                else if (r.FirstName != result[i - 1].FirstName && r.LastName != result[i - 1].LastName && j > 0 && j < 5)
                 {
                     if (r.EndDate == null)
                     {
@@ -130,6 +130,32 @@ namespace EmpoyeesDB
                     j++;
                 }
                 i++;
+            }
+            return sb.ToString().TrimEnd();
+        }
+
+        static string ManagerProfile()
+        {
+            int id = Convert.ToInt32(Console.ReadLine());
+            var result =
+                _context.EmployeesProjects.Join(_context.Employees,
+                (ep => ep.EmployeeId),
+                (e => e.EmployeeId),
+                (ep, e) => new
+                {
+                    EmployeeId = e.EmployeeId,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    MiddleName = e.MiddleName,
+                    ProjectName = ep.Project.Name
+                }).
+                Where(e => e.EmployeeId == id).
+                ToList();
+            var sb = new StringBuilder();
+            sb.Append($"{result[0].FirstName} {result[0].LastName} {result[0].MiddleName} " + " \n");
+            foreach (var r in result)
+            {
+                sb.Append($"{r.ProjectName}"+"\n");
             }
             return sb.ToString().TrimEnd();
         }
