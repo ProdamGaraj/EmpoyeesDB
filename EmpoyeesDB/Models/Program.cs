@@ -102,20 +102,22 @@ namespace EmpoyeesDB
             var sb = new StringBuilder();
             int i = 0;
             int j = 0;
-            if (i == 0)
+            foreach (var r in result)
             {
-                if (result[i].EndDate == null)
+                if (i == 0)
                 {
-                    sb.Append($"{result[i].FirstName} {result[i].LastName} {result[i].Manager.FirstName} {result[i].Manager.LastName} {result[i].ProjectName} {result[i].StartDate} {NullEndDate}");
+                    if (r.EndDate == null)
+                    {
+                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {NullEndDate}");
+                    }
+                    else
+                    {
+                        sb.Append($"{r.FirstName} {r.LastName} {r.Manager.FirstName} {r.Manager.LastName} {r.ProjectName} {r.StartDate} {r.EndDate}" + "\n");
+                    }
+                    j++;
                 }
-                else
-                {
-                    sb.Append($"{result[i].FirstName} {result[i].LastName} {result[i].Manager.FirstName} {result[i].Manager.LastName} {result[i].ProjectName} {result[i].StartDate} {result[i].EndDate}" + "\n");
-                }
-                j++;
-            }
-            foreach (var r in result)            {
-                if (r.FirstName != result[i-1].FirstName && r.LastName != result[i-1].LastName && j > 0 && j < 5)
+
+                else if (r.FirstName != result[i-1].FirstName && r.LastName != result[i-1].LastName && j > 0 && j < 5)
                 {
                     if (r.EndDate == null)
                     {
