@@ -10,7 +10,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(ProjectAudit());
+            Console.WriteLine(LitleDepartaments());
         }
         static string GetEmployeesInformation()
         {
@@ -104,7 +104,7 @@ namespace EmpoyeesDB
             int j = 0;
             foreach (var r in result)
             {
-                if (i == 0||(r.FirstName != result[i - 1].FirstName && r.LastName != result[i - 1].LastName && j > 0 && j < 5))
+                if (i == 0 || (r.FirstName != result[i - 1].FirstName && r.LastName != result[i - 1].LastName && j > 0 && j < 5))
                 {
                     if (r.EndDate == null)
                     {
@@ -142,10 +142,25 @@ namespace EmpoyeesDB
             sb.Append($"{result[0].FirstName} {result[0].LastName} {result[0].MiddleName} " + " \n");
             foreach (var r in result)
             {
-                sb.Append($"{r.ProjectName}"+"\n");
+                sb.Append($"{r.ProjectName}" + "\n");
             }
             return sb.ToString().TrimEnd();
         }
 
+        static string LitleDepartaments()
+        {
+            var result =
+                _context.Departments.Where(d => d.Employees.Count < 5).ToList();
+
+            var sb = new StringBuilder();
+
+            foreach (var r in result)
+            {
+                sb.Append($"{r.Name}" + "\n");
+            }
+
+                return sb.ToString().TrimEnd();
+            }
+
+        }
     }
-}
