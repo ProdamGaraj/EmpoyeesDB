@@ -11,7 +11,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(PanicMethod());
+            Console.WriteLine(Town404());
         }
         static string GetEmployeesInformation()
         {
@@ -221,6 +221,28 @@ namespace EmpoyeesDB
             _context.SaveChanges();
             return "Keep panic away it`s gone.";
             }
+        static string Town404()
+        {
+            string TownName = Console.ReadLine();
+
+            var TownToDelete = _context.Towns.First(d => d.Name == TownName);
+            Addresses Adr = new Addresses { AddressText = "Temp" };
+            var AddressesToDelete = _context.Addresses.Where(a=>a.Town==TownToDelete).ToList();
+            var Employees = _context.Employees.Where(e => e.Address.Town==TownToDelete).ToList();
+            foreach (var e in Employees)
+            {
+                e.Address = Adr;
+            }
+            _context.SaveChanges();
+            foreach (var a in AddressesToDelete)
+            {
+                _context.Addresses.Remove(a);
+            }
+            _context.SaveChanges();
+            _context.Towns.Remove(TownToDelete);
+            _context.SaveChanges();
+            return TownName+" deleted";
+        }
 
     }
 }
