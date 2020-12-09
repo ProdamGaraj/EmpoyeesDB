@@ -10,7 +10,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(LitleDepartaments());
+            Console.WriteLine(SalaryIncrease());
         }
         static string GetEmployeesInformation()
         {
@@ -159,8 +159,33 @@ namespace EmpoyeesDB
                 sb.Append($"{r.Name}" + "\n");
             }
 
-                return sb.ToString().TrimEnd();
-            }
+            return sb.ToString().TrimEnd();
+        }
 
+        static string SalaryIncrease()
+        {
+            Console.WriteLine("Vvedite otdel v kotorom nado povisit zarplatu.");
+            int DepartamentId = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("Vvedite % povisheniya zarplat?");
+            int IncreasePercent = Convert.ToInt32(Console.ReadLine());
+            var result =
+                _context.Employees.Where(e => e.DepartmentId == DepartamentId).Select(e=>e);
+
+            var sb = new StringBuilder();
+
+            foreach(var r in result)
+            {
+                sb.Append($"{r.FirstName} {r.LastName} {r.Salary} "+"\n");
+                r.Salary *= (decimal)((IncreasePercent + 100)/100f);
+            }
+            sb.Append("New salaries \n");
+            _context.SaveChanges();
+            foreach (var r in result)
+            {
+                sb.Append($"{r.FirstName} {r.LastName} {r.Salary} " + "\n");
+            }
+            return sb.ToString().TrimEnd();
         }
     }
+}
