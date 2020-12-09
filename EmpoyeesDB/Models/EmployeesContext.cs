@@ -135,7 +135,7 @@ namespace EmpoyeesDB
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.EmployeesProjects)
                     .HasForeignKey(d => d.EmployeeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EmployeesProjects_Employees");
 
                 entity.HasOne(d => d.Project)

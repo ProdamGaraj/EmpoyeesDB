@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmpoyeesDB
 {
@@ -10,7 +11,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(SalaryIncrease());
+            Console.WriteLine(PanicMethod());
         }
         static string GetEmployeesInformation()
         {
@@ -170,14 +171,14 @@ namespace EmpoyeesDB
             Console.WriteLine("Vvedite % povisheniya zarplat?");
             int IncreasePercent = Convert.ToInt32(Console.ReadLine());
             var result =
-                _context.Employees.Where(e => e.DepartmentId == DepartamentId).Select(e=>e);
+                _context.Employees.Where(e => e.DepartmentId == DepartamentId).Select(e => e);
 
             var sb = new StringBuilder();
 
-            foreach(var r in result)
+            foreach (var r in result)
             {
-                sb.Append($"{r.FirstName} {r.LastName} {r.Salary} "+"\n");
-                r.Salary *= (decimal)((IncreasePercent + 100)/100f);
+                sb.Append($"{r.FirstName} {r.LastName} {r.Salary} " + "\n");
+                r.Salary *= (decimal)((IncreasePercent + 100) / 100f);
             }
             sb.Append("New salaries \n");
             _context.SaveChanges();
@@ -187,5 +188,39 @@ namespace EmpoyeesDB
             }
             return sb.ToString().TrimEnd();
         }
+
+        static string PanicMethod()
+            {
+            string DepartmentName = Console.ReadLine();
+            var department = _context.Departments.First(d => d.Name == DepartmentName);
+            Employees TempEmpl = new Employees { 
+                FirstName = "Temp",
+                LastName = "Temp",
+                JobTitle = "Temp",
+                DepartmentId = 2,
+                HireDate = new DateTime(2008, 5, 1),
+                Salary=0 };
+            Departments TempDep = new Departments { Name = "Temp", Manager=TempEmpl};
+            _context.Departments.Add(TempDep);
+            _context.SaveChanges();
+            TempEmpl.Department = TempDep;
+            _context.SaveChanges();
+            if (department == null)
+            {
+                Console.WriteLine("It`s nothing to search in here.");
+                return null;
+            }
+            var employees = _context.Employees.Where(e => e.Department.Name == DepartmentName).ToList();
+            foreach (var e in employees)
+            {
+                e.Department=_context.Departments.First(d=>d==TempDep);
+            }
+            department.Manager = null;
+            _context.SaveChanges();
+            _context.Departments.Remove(department);
+            _context.SaveChanges();
+            return "Keep panic away it`s gone.";
+            }
+
     }
 }
