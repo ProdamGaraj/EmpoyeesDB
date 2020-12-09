@@ -11,7 +11,7 @@ namespace EmpoyeesDB
         static private EmployeesContext _context = new EmployeesContext();
         static void Main(string[] args)
         {
-            Console.WriteLine(Town404());
+            Console.WriteLine();//Type any of task names right here.
         }
         static string GetEmployeesInformation()
         {
